@@ -1,5 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
-import { Observable, of, from, interval, map, takeUntil, Subject } from 'rxjs';
+import { Observable, of, from, interval, map, takeUntil, Subject,timer } from 'rxjs';
 
 @Component({
   selector: 'app-rxjs-folder',
@@ -18,6 +18,7 @@ export class RxjsFolder implements OnDestroy {
   stateList$ = from(['pune', 'mumbai', 'nagpur']);
 
   myInterval$ = interval(2000);
+  timer$=timer(5000);
 
   constructor() {
 
@@ -30,6 +31,10 @@ export class RxjsFolder implements OnDestroy {
     //   .subscribe(v => {
     //     console.log('timer value', v);
     //   });
+
+    this.timer$.subscribe(v=>{
+      console.log("timer executeda after 5 sec");//timer executes only once but the interval keeps executing every 2 seconds.
+    })
 
     // city list observable
     this.cityList$
