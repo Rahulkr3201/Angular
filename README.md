@@ -1,59 +1,30 @@
-# Tutorials
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.2.
 
-## Development server
+RxJS in one glance
 
-To start a local development server, run:
+Observable → represents a stream of data over time
 
-```bash
-ng serve
-```
+pipe() → used to transform the stream
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Operators (map, filter, switchMap, etc.) → apply logic to the data
 
-## Code scaffolding
+subscribe() / async pipe → consume the final result
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+-------------------------->
 
-```bash
-ng generate component component-name
-```
+of() emits what you give it.
+from() breaks it into pieces and emits them.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+-------------------------->
 
-```bash
-ng generate --help
-```
+destroy$ → stop signal
 
-## Building
+takeUntil() → listens for stop signal
 
-To build the project run:
+next() → tells streams to stop
 
-```bash
-ng build
-```
+complete() → frees memory
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+If you manually subscribe → you must clean up with destroy$.
+----------------------------------->
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.

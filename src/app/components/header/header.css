@@ -1,0 +1,5 @@
+a {
+  padding: 8px 12px;   /* space inside the link */
+  margin: 0 8px;       /* space between links */
+  display: inline-block;
+}

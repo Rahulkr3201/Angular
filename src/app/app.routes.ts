@@ -12,5 +12,11 @@ export const routes: Routes = [{
     loadComponent:()=>{
         return import('./todos/todos').then((m)=>m.Todos);
     }
+},
+{
+    path:'rxjs-folder',
+    loadComponent:()=>{
+        return import('./rxjs-folder/rxjs-folder').then((m)=>m.RxjsFolder);
+    }
 }
 ];
