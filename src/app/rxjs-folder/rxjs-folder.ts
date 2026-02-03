@@ -1,5 +1,21 @@
 import { Component, OnDestroy } from '@angular/core';
-import { Observable, of, from, interval, map, takeUntil, Subject,timer } from 'rxjs';
+import {
+  Observable,
+  of,
+  from,
+  interval,
+  Subject,
+  timer
+} from 'rxjs';
+
+import {
+  map,
+  takeUntil,
+  switchMap,
+  mergeMap,
+  concatMap,
+  delay
+} from 'rxjs/operators';
 
 @Component({
   selector: 'app-rxjs-folder',
@@ -12,17 +28,23 @@ export class RxjsFolder implements OnDestroy {
   // 🔹 REQUIRED for takeUntil
   private destroy$ = new Subject<void>();
 
+  // ---------- BASIC DATA ----------
   cityList: string[] = ['pune', 'mumbai', 'nagpur'];
   cityList$ = of(this.cityList);
-
   stateList$ = from(['pune', 'mumbai', 'nagpur']);
 
+  // ---------- TIME SOURCES ----------
   myInterval$ = interval(2000);
-  timer$=timer(5000);
+  timer$ = timer(5000);
+
+  // ---------- SOURCES FOR MAP OPERATORS ----------
+  ids$ = from([1, 2, 3]);
+  steps$ = from(['step1', 'step2', 'step3']);
+  search$ = interval(4000);
 
   constructor() {
 
-    // interval observable
+    // ================= INTERVAL =================
     // this.myInterval$
     //   .pipe(
     //     map(v => v + 1),
@@ -32,35 +54,89 @@ export class RxjsFolder implements OnDestroy {
     //     console.log('timer value', v);
     //   });
 
-    this.timer$.subscribe(v=>{
-      console.log("timer executeda after 5 sec");//timer executes only once but the interval keeps executing every 2 seconds.
-    })
+    // ================= TIMER =================
+    // this.timer$.subscribe(v => {
+    //   console.log('timer executed after 5 sec');
+    // });
 
-    // city list observable
-    this.cityList$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(cities => {
-        console.log(cities);
+    // ================= CITY LIST =================
+    // this.cityList$
+    //   .pipe(takeUntil(this.destroy$))
+    //   .subscribe(cities => {
+    //     console.log(cities);
+    //   });
+
+    // ================= STATE LIST =================
+    // this.stateList$
+    //   .pipe(takeUntil(this.destroy$))
+    //   .subscribe(states => {
+    //     console.log(states);
+    //   });
+
+    // ================= CUSTOM OBSERVABLE =================
+    // const myObs$ = new Observable<string>(observer => {
+    //   observer.next('hello rxjs observable');
+    //   observer.complete();
+    // });
+
+    // myObs$
+    //   .pipe(takeUntil(this.destroy$))
+    //   .subscribe(message => {
+    //     console.log(message);
+    //   });
+
+    // =====================================================
+    // 🔥 switchMap — CANCEL previous, keep latest
+    // Use case: search, route change
+    // =====================================================
+
+    // this.search$
+    //   .pipe(
+    //     takeUntil(this.destroy$),
+    //     switchMap(value => {
+    //       console.log('switchMap source:', value);
+    //       return of(`API result for ${value}`).pipe(delay(2000));
+    //     })
+    //   )
+    //   .subscribe(result => {
+    //     console.log('switchMap output:', result);
+    //   });
+
+    // =====================================================
+    // 🔥 mergeMap — PARALLEL execution
+    // Use case: multiple independent API calls
+    // =====================================================
+
+    // this.ids$
+    //   .pipe(
+    //     takeUntil(this.destroy$),
+    //     mergeMap(id => {
+    //       console.log('mergeMap source:', id);
+    //       return of(`API result for ${id}`).pipe(delay(2000));
+    //     })
+    //   )
+    //   .subscribe(result => {
+    //     console.log('mergeMap output:', result);
+    //   });
+
+    // =====================================================
+    // 🔥 concatMap — SEQUENTIAL execution
+    // first one from outer comes and the inner will execute for that, then second comes from the outer . 
+    // Use case: ordered / dependent operations
+    // =====================================================
+
+    this.steps$
+      .pipe(
+        takeUntil(this.destroy$),
+        concatMap(step => {
+          console.log('concatMap source:', step);
+          return of(`Processed ${step}`).pipe(delay(4000));
+        })
+      )
+      .subscribe(result => {
+        console.log('concatMap output:', result);
       });
 
-    // state list observable
-    this.stateList$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(states => {
-        console.log(states);
-      });
-
-    // custom observable
-    const myObs$ = new Observable<string>(observer => {
-      observer.next('hello rxjs observable');
-      observer.complete();
-    });
-
-    myObs$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(message => {
-        console.log(message);
-      });
   }
 
   // 🔹 REQUIRED to stop interval & clean subscriptions
