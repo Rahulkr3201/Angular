@@ -115,3 +115,34 @@ ngOnInit()        // start
 ngOnChanges()    // input change
 ngOnDestroy()    // cleanup
 -these are called the angular lifecycle hooks
+---------------------------------->
+What happens when you call .next()
+.next(value) pushes a new value into the BehaviorSubject
+The subject stores this value as the latest state
+ALL current subscribers are immediately notified
+Each .subscribe() callback runs right away with that value
+
+------------------------------------->
+observabke are read only in the angualr . we can only subscribe . we cant use .next() to push to it.
+whereas the subject and behaviour subject are read and write can use .next() adn .subscribe()
+-------------------------------------->
+without ngrx what we were doing:-
+API response
+     ↓
+BehaviorSubject.next()
+     ↓
+Observable stream emits
+     ↓
+Subscribed components react
+     ↓
+UI updates
+
+------------------------------------>
+After the API call is made, the value comes back and is pushed into the BehaviorSubject.
+Then, everywhere the service is injected and subscribed, the code reacts and updates.
+------------------------------------>
+redux:Slice → Store → Provider → useDispatch/useSelector
+ngrx:Actions/Reducer/Effects → StoreModule → Inject Store → dispatch/select
+------------------------------------->
+If data is only needed in the template → use async pipe.(it automaically subscribe, unsubscribe and all);
+If you need the value inside TS logic → use subscribe.
