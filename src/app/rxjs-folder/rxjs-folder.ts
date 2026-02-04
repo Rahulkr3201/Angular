@@ -1,4 +1,5 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, inject } from '@angular/core';
+import { UserService} from '../services/user.services';
 import {
   Observable,
   of,
@@ -17,6 +18,8 @@ import {
   delay
 } from 'rxjs/operators';
 
+
+
 @Component({
   selector: 'app-rxjs-folder',
   standalone: true,
@@ -27,6 +30,9 @@ export class RxjsFolder implements OnDestroy {
 
   // 🔹 REQUIRED for takeUntil
   private destroy$ = new Subject<void>();
+
+  // 🔹 API service (ADDED)
+  private userService = inject(UserService);
 
   // ---------- BASIC DATA ----------
   cityList: string[] = ['pune', 'mumbai', 'nagpur'];
@@ -40,19 +46,22 @@ export class RxjsFolder implements OnDestroy {
   // ---------- SOURCES FOR MAP OPERATORS ----------
   ids$ = from([1, 2, 3]);
   steps$ = from(['step1', 'step2', 'step3']);
-  search$ = interval(4000);
+  search$ = interval(5000);
+
+  // ---------- API IDS (ADDED) ----------
+  userIds$ = from([1, 2, 3]);
 
   constructor() {
 
     // ================= INTERVAL =================
-    // this.myInterval$
-    //   .pipe(
-    //     map(v => v + 1),
-    //     takeUntil(this.destroy$)
-    //   )
-    //   .subscribe(v => {
-    //     console.log('timer value', v);
-    //   });
+    this.myInterval$
+      .pipe(
+        map(v => v + 1),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(v => {
+        console.log('timer value', v);
+      });
 
     // ================= TIMER =================
     // this.timer$.subscribe(v => {
@@ -90,17 +99,17 @@ export class RxjsFolder implements OnDestroy {
     // Use case: search, route change
     // =====================================================
 
-    // this.search$
-    //   .pipe(
-    //     takeUntil(this.destroy$),
-    //     switchMap(value => {
-    //       console.log('switchMap source:', value);
-    //       return of(`API result for ${value}`).pipe(delay(2000));
-    //     })
-    //   )
-    //   .subscribe(result => {
-    //     console.log('switchMap output:', result);
-    //   });
+    this.search$
+      .pipe(
+        takeUntil(this.destroy$),
+        switchMap(value => {
+          console.log('switchMap source:', value);
+          return of(`API result for ${value}`).pipe(delay(3000));
+        })
+      )
+      .subscribe(result => {
+        console.log('switchMap output:', result);
+      });
 
     // =====================================================
     // 🔥 mergeMap — PARALLEL execution
@@ -121,20 +130,38 @@ export class RxjsFolder implements OnDestroy {
 
     // =====================================================
     // 🔥 concatMap — SEQUENTIAL execution
-    // first one from outer comes and the inner will execute for that, then second comes from the outer . 
+    // first one from outer comes and the inner will execute for that,
+    // then second comes from the outer.
     // Use case: ordered / dependent operations
     // =====================================================
 
-    this.steps$
+    // this.steps$
+    //   .pipe(
+    //     takeUntil(this.destroy$),
+    //     concatMap(step => {
+    //       console.log('concatMap source:', step);
+    //       return of(`Processed ${step}`).pipe(delay(4000));
+    //     })
+    //   )
+    //   .subscribe(result => {
+    //     console.log('concatMap output:', result);
+    //   });
+
+    // =====================================================
+    // 🔥 REAL API CALL USING RXJS (ADDED)
+    // Sequential API execution using concatMap
+    // =====================================================
+
+    this.userIds$
       .pipe(
         takeUntil(this.destroy$),
-        concatMap(step => {
-          console.log('concatMap source:', step);
-          return of(`Processed ${step}`).pipe(delay(4000));
+        concatMap(id => {
+          console.log('API call for user id:', id);
+          return this.userService.getUserById(id);
         })
       )
-      .subscribe(result => {
-        console.log('concatMap output:', result);
+      .subscribe(user => {
+        console.log('API response:', user);
       });
 
   }

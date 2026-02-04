@@ -70,6 +70,11 @@ Only latest result is emitted
 --------------------------------------->
 subject : it is observable + observer.
 A Subject was introduced because a normal Observable could not be pushed to from the outside and could not share one data source with multiple listeners.
+-How a Subject behaves in real life
+Imagine this:
+A person shouts announcements in a room.
+If you are inside the room at that moment, you hear it.
+If you enter later, you missed it forever.
 Feature	                Observable (earlier)	    Subject (now)
 Push data using .next() from outside	❌ Not possible	✅ Possible  
 Shared data source	❌ No (each subscriber has its own execution)	✅ Yes (single shared source)
@@ -87,3 +92,26 @@ subscribe() only sets up the listener
 .next(1) executes the listener immediately
 Subjects emit synchronously by default
 imp:- subscribe dont execute it just set up the listner, next executes the listner
+
+--------------------------------->
+Subject:-
+You must subscribe first
+Only values emitted after you subscribe are received
+If you join late, you miss earlier data
+Does not remember anything
+BehaviorSubject:-
+You still must subscribe
+But on subscription, you immediately receive the latest value
+Even if it was emitted before you joined
+BehaviorSubject remembers the latest value, whereas Subject does not.
+
+---------------------------------->
+Service  → owns reusable data & logic
+inject() → gives you access to that service
+inject() doesn’t inject data — it injects the service that owns the data.
+-ngOnInit is equal to useffect for exectution once after creation.
+-ngOnchanges- equal to useeffect but upon prop change.
+ngOnInit()        // start
+ngOnChanges()    // input change
+ngOnDestroy()    // cleanup
+-these are called the angular lifecycle hooks
